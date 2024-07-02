@@ -51,6 +51,10 @@ int main(int argc, char *argv[])
 
     XSingleApplication app(argc, argv);
 
+#ifdef Q_OS_LINUX
+    app.setDesktopFileName("die");
+#endif
+
 #ifndef Q_OS_WIN
     QApplication::setWindowIcon(QIcon(":/images/main.png"));
 #endif
@@ -71,7 +75,6 @@ int main(int argc, char *argv[])
     xOptions.addID(XOptions::ID_VIEW_LANG, "System");
     xOptions.addID(XOptions::ID_VIEW_STYLE, "Fusion");
     xOptions.addID(XOptions::ID_VIEW_SINGLEAPPLICATION, false);
-    xOptions.addID(XOptions::ID_VIEW_FONT, "");
 
     xOptions.load();
 

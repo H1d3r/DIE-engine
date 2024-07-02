@@ -182,6 +182,9 @@ int main(int argc, char *argv[])
     QCommandLineOption clAllTypesScan(QStringList() << "a"
                                                     << "alltypes",
                                       "Scan all types.");
+    QCommandLineOption clProfiling(QStringList() << "l"
+                                                 << "profiling",
+                                   "Profiling signatures.");
     QCommandLineOption clEntropy(QStringList() << "e"
                                                << "entropy",
                                  "Show entropy.");
@@ -214,7 +217,7 @@ int main(int argc, char *argv[])
                                       "Show database.");
     QCommandLineOption clSpecial(QStringList() << "S"
                                                << "special",
-                                 "Special file info for <method>. For example -S \"Hash\".", "method");
+                                 "Special file info for <method>. For example -S \"Hash\" or -S \"Hash#MD5\".", "method");
     QCommandLineOption clShowMethods(QStringList() << "m"
                                                    << "showmethods",
                                      "Show all special methods for the file.");
@@ -224,6 +227,7 @@ int main(int argc, char *argv[])
     parser.addOption(clHeuristicScan);
     parser.addOption(clVerbose);
     parser.addOption(clAllTypesScan);
+    parser.addOption(clProfiling);
     parser.addOption(clEntropy);
     parser.addOption(clInfo);
     parser.addOption(clSpecial);
@@ -251,6 +255,8 @@ int main(int argc, char *argv[])
     scanOptions.bIsHeuristicScan = parser.isSet(clHeuristicScan);
     scanOptions.bIsVerbose = parser.isSet(clVerbose);
     scanOptions.bAllTypesScan = parser.isSet(clAllTypesScan);
+    scanOptions.bIsProfiling = parser.isSet(clProfiling);
+    scanOptions.nBufferSize = 2 * 1024 * 1024;  // TODO
     scanOptions.bShowEntropy = parser.isSet(clEntropy);
     scanOptions.bShowExtraInfo = parser.isSet(clInfo);
     scanOptions.bResultAsXML = parser.isSet(clResultAsXml);
@@ -309,12 +315,12 @@ int main(int argc, char *argv[])
 
         printf("Methods:\n");
 
-        QList<XFileInfo::METHOD_DATA> listMethods = XFileInfo::getMethodNames(fileType);
+        QList<QString> listMethods = XFileInfo::getMethodNames(fileType);
 
         qint32 nNumberOfMethods = listMethods.count();
 
         for (qint32 i = 0; i < nNumberOfMethods; i++) {
-            printf("\t%s\n", listMethods.at(i).sName.toUtf8().data());
+            printf("\t%s\n", listMethods.at(i).toUtf8().data());
         }
     } else if (listArgs.count()) {
         if (!bIsDbUsed) {
